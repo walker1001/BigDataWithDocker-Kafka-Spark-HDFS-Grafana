@@ -131,7 +131,7 @@ services:
     ports:
       - "8889:8888"
     volumes:
-      - $PWD/src/notebook-spark-streaming-slow-branch:/home/workspace
+      - $PWD/src/notebook-spark-streaming-slow-branch:/home/jovyan/work
       
   # kafka_manager:
   #   image: hlebalbau/kafka-manager:2.0.0.2
