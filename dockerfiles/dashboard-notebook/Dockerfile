@@ -1,4 +1,4 @@
-FROM jupyter/tensorflow-notebook
+FROM pyspark-notebook:spark2.4.1-python3.7-hadoop2.7
 
 USER root
 
