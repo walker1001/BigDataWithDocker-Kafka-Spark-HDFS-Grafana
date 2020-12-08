@@ -1,0 +1,180 @@
+version: "3"
+services:
+############################ HDFS #################################
+  namenode:
+    image: bde2020/hadoop-namenode:2.0.0-hadoop2.7.4-java8
+    container_name: namenode
+    environment:
+      - CLUSTER_NAME=test
+    env_file:
+      - ./hadoop.env
+    ports:
+      - 8020:8020
+      - 50070:50070
+  datanode:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop2.7.4-java8
+    container_name: datanode
+    environment:
+      SERVICE_PRECONDITION: "namenode:50070"
+    env_file:
+      - ./hadoop.env
+    ports:
+      - 50075:50075
+
+########################### Hadoop v2 ###############################
+  resourcemanager:
+    image: bde2020/hadoop-resourcemanager:2.0.0-hadoop2.7.4-java8
+    container_name: resourcemanager
+    environment:
+      SERVICE_PRECONDITION: "namenode:50070 datanode:50075"
+    env_file:
+      - ./hadoop.env
+    ports:
+      - 8088:8088
+      - 8032:8032
+  nodemanager1:
+    image: bde2020/hadoop-nodemanager:2.0.0-hadoop2.7.4-java8
+    container_name: nodemanager
+    environment:
+      SERVICE_PRECONDITION: "namenode:50070 datanode:50075 resourcemanager:8088"
+    env_file:
+      - ./hadoop.env
+    depends_on:
+      - namenode
+      - resourcemanager
+    ports:
+      - 8042:8042
+
+############################## Hive #################################
+  hive-server:
+    container_name: hive-server
+    image: bde2020/hive:2.3.2-postgresql-metastore
+    env_file:
+      - ./hadoop-hive.env
+    environment:
+      HIVE_CORE_CONF_javax_jdo_option_ConnectionURL: "jdbc:postgresql://hive-metastore/metastore"
+      SERVICE_PRECONDITION: "hive-metastore:9083"
+    ports:
+      - "10000:10000"
+  hive-metastore:
+    container_name: hive-metastore
+    image: bde2020/hive:2.3.2-postgresql-metastore
+    env_file:
+      - ./hadoop-hive.env
+    command: /opt/hive/bin/hive --service metastore
+    environment:
+      SERVICE_PRECONDITION: "namenode:50070 datanode:50075 hive-metastore-postgresql:5432"
+    ports:
+      - "9083:9083"
+  hive-metastore-postgresql:
+    container_name: hive-metastore-postgresql
+    image: bde2020/hive-metastore-postgresql:2.3.0
+
+############################## Spark #################################  
+  spark-master:
+    image: spark-master:spark2.4.1-python3.7-hadoop2.7
+    container_name: spark-master
+    ports:
+      - "8082:8080"
+      - "7077:7077"
+    environment:
+      - INIT_DAEMON_STEP=setup_spark
+    volumes:
+      - $PWD/../shared:/data
+  spark-worker-1:
+    image: spark-worker:spark2.4.1-python3.7-hadoop2.7
+    container_name: spark-worker-1
+    depends_on:
+      - spark-master
+    ports:
+      - "8081:8081"
+    environment:
+      - "SPARK_MASTER=spark://spark-master:7077"
+
+############################## Kafka #################################
+  zookeeper:
+    image: zookeeper:3.4.10
+    container_name: zookeeper
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=0.0.0.0:2888:3888
+      ZOO_TICK_TIME: 15000
+    ports:
+      - 2181:2181      
+  kafka:
+    image: wurstmeister/kafka:2.12-2.2.1
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_ADVERTISED_LISTENERS=INSIDE://kafka:9093,OUTSIDE://localhost:9092
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      - KAFKA_LISTENERS=INSIDE://0.0.0.0:9093,OUTSIDE://0.0.0.0:9092
+      - KAFKA_INTER_BROKER_LISTENER_NAME=INSIDE
+
+############################## Notebook #################################
+  hive-query-notebook:
+    image: hive-query-notebook:latest
+    container_name: hive-query-notebook
+    ports:
+      - "8888:8888"
+    volumes:
+      - $PWD/src/notebook-query-hive:/home/jovyan/work
+
+  pyspark-notebook:
+    image: pyspark-notebook:spark2.4.1-python3.7-hadoop2.7
+    container_name: pyspark-notebook
+    ports:
+      - "8889:8888"
+    volumes:
+      - $PWD/src/notebook-spark-streaming-slow-branch:/home/workspace
+      
+  # kafka_manager:
+  #   image: hlebalbau/kafka-manager:2.0.0.2
+  #   container_name: kafka_manager
+  #   ports:
+  #     - "9000:9000"
+  #   environment:
+  #     - ZK_HOSTS=zoo:2181
+  #     - KAFKA_MANAGER_AUTH_ENABLED=true
+  #     - KAFKA_MANAGER_USERNAME=hai
+  #     - KAFKA_MANAGER_PASSWORD=hai
+  #   command: -Dpidfile.path=/dev/null
+
+  # cassandra:
+  #   image: cassandra:3.11.4
+  #   container_name: cassandra
+  #   ports:
+  #     - "7000:7000"
+
+  # postgres:
+  #   image: postgres:latest
+  #   container_name: shopping_cart_postgres
+  #   environment:
+  #     - "TZ=Europe/Amsterdam"
+  #     - "POSTGRES_USER=shopping_cart"
+  #     - "POSTGRES_PASSWORD=shopping_cart"
+  #   ports:
+  #     - "5432:5432"
+
+  # historyserver:
+  #   image: bde2020/hadoop-historyserver:2.0.0-hadoop2.7.4-java8
+  #   container_name: historyserver
+  #   environment:
+  #     SERVICE_PRECONDITION: "namenode:50070 datanode:50075 resourcemanager:8088"
+  #   depends_on:
+  #     - resourcemanager
+  #   env_file:
+  #     - ./hadoop.env
+  #   ports:
+  #     - 8188:8188
+  #     - 19888:19888
+
+networks:
+  default:
+    external:
+      name: bigdata
