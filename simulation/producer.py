@@ -13,9 +13,8 @@ producer = KafkaProducer(bootstrap_servers=bootstrap_servers)
 df = pd.read_csv("small_trips.csv")
 
 header = [x for x in df.columns]
+counter = 0
 for i in range(df.shape[0]):
-#    s = df.iloc[i, :]
-#    d = {"transaction_id": "11111", "transaction_card_type": "222222", "transaction_amount": "33333333", "transaction_datetime": "444444"}
     d = {}
     for j in range(len(header)):
         d[header[j]] = str(df[header[j]][i])
@@ -23,6 +22,8 @@ for i in range(df.shape[0]):
     producer.send(topicName, msg.encode())
     print(msg)
     time.sleep(1)
+    counter += 1
+print(f"Sent {counter} records")
 
 # WORD_FILE = 'fake_data.txt'
 # WORDS = open(WORD_FILE).read().splitlines()
