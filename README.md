@@ -22,5 +22,6 @@ docker-compose -f docker-compose.yml up -d
 Go to gateway and create a topic
 ```bash
 docker run --network bigdata -it wurstmeister/kafka:2.12-2.2.1 bash
-bin/kafka-topics.sh --create --topic trips --partitions 2 --replication-factor 1 --bootstrap-server localhost:9092,kafka:9093
+cd /opt/kafka
+bin/kafka-topics.sh --create --topic trips --partitions 2 --replication-factor 1 --bootstrap-server localhost:9092,kafka-broker-1:9093,localhost:9094,kafka-broker-2:9093
 ```
