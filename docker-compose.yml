@@ -11,15 +11,25 @@ services:
     ports:
       - 8020:8020
       - 50070:50070
-  datanode:
+  datanode-1:
     image: bde2020/hadoop-datanode:2.0.0-hadoop2.7.4-java8
-    container_name: datanode
+    container_name: datanode-1
     environment:
       SERVICE_PRECONDITION: "namenode:50070"
     env_file:
       - ./hadoop.env
     ports:
       - 50075:50075
+
+  datanode-2:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop2.7.4-java8
+    container_name: datanode-2
+    environment:
+      SERVICE_PRECONDITION: "namenode:50070"
+    env_file:
+      - ./hadoop.env
+    ports:
+      - 50076:50075
 
 ########################### Hadoop v2 ###############################
   # resourcemanager:
@@ -63,7 +73,7 @@ services:
       - ./hadoop-hive.env
     command: /opt/hive/bin/hive --service metastore
     environment:
-      SERVICE_PRECONDITION: "namenode:50070 datanode:50075 hive-metastore-postgresql:5432"
+      SERVICE_PRECONDITION: "namenode:50070 datanode-1:50075 datanode-2:50075 hive-metastore-postgresql:5432"
     ports:
       - "9083:9083"
   hive-metastore-postgresql:
@@ -156,9 +166,9 @@ services:
       ZOO_TICK_TIME: 15000
     ports:
       - 2181:2181      
-  kafka:
+  kafka-broker-1:
     image: wurstmeister/kafka:2.12-2.2.1
-    container_name: kafka
+    container_name: kafka-broker-1
     depends_on:
       - zookeeper
     ports:
@@ -166,10 +176,35 @@ services:
     environment:
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
       - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_ADVERTISED_LISTENERS=INSIDE://kafka:9093,OUTSIDE://localhost:9092
+      - KAFKA_ADVERTISED_LISTENERS=INSIDE://kafka-broker-1:9093,OUTSIDE://localhost:9092
       - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
-      - KAFKA_LISTENERS=INSIDE://0.0.0.0:9093,OUTSIDE://0.0.0.0:9092
+      - KAFKA_LISTENERS=INSIDE://kafka-broker-1:9093,OUTSIDE://0.0.0.0:9092
       - KAFKA_INTER_BROKER_LISTENER_NAME=INSIDE
+  kafka-broker-2:
+    image: wurstmeister/kafka:2.12-2.2.1
+    container_name: kafka-broker-2
+    depends_on:
+      - zookeeper
+    ports:
+      - "9094:9094"
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_ADVERTISED_LISTENERS=INSIDE://kafka-broker-2:9093,OUTSIDE://localhost:9094
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      - KAFKA_LISTENERS=INSIDE://kafka-broker-2:9093,OUTSIDE://0.0.0.0:9094
+      - KAFKA_INTER_BROKER_LISTENER_NAME=INSIDE
+  kafka_manager:
+    image: hlebalbau/kafka-manager:2.0.0.2
+    container_name: kafka_manager
+    ports:
+      - "9000:9000"
+    environment:
+      - ZK_HOSTS=zookeeper:2181
+      - KAFKA_MANAGER_AUTH_ENABLED=true
+      - KAFKA_MANAGER_USERNAME=hai
+      - KAFKA_MANAGER_PASSWORD=hai
+    command: -Dpidfile.path=/dev/null
 
 ############################## Notebook #################################
   dashboard-notebook:
@@ -188,18 +223,6 @@ services:
     volumes:
       - $PWD/src/notebook-spark-streaming-slow-branch:/home/jovyan/work
       
-  # kafka_manager:
-  #   image: hlebalbau/kafka-manager:2.0.0.2
-  #   container_name: kafka_manager
-  #   ports:
-  #     - "9000:9000"
-  #   environment:
-  #     - ZK_HOSTS=zoo:2181
-  #     - KAFKA_MANAGER_AUTH_ENABLED=true
-  #     - KAFKA_MANAGER_USERNAME=hai
-  #     - KAFKA_MANAGER_PASSWORD=hai
-  #   command: -Dpidfile.path=/dev/null
-
   # cassandra:
   #   image: cassandra:3.11.4
   #   container_name: cassandra
