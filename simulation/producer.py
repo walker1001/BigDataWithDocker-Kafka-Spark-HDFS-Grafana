@@ -4,7 +4,7 @@ import pandas as pd
 import time
 # from random import randint
 
-bootstrap_servers = ['localhost:9092']
+bootstrap_servers = ['localhost:9092', 'localhost:9094']
 
 topicName = 'trips'
 
@@ -21,7 +21,7 @@ for i in range(df.shape[0]):
     msg = json.dumps(d)
     producer.send(topicName, msg.encode())
     print(msg)
-    time.sleep(1)
+    time.sleep(0.001)
     counter += 1
 print(f"Sent {counter} records")
 
