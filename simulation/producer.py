@@ -11,7 +11,7 @@ topicName = 'trips'
 
 producer = KafkaProducer(bootstrap_servers=bootstrap_servers)
 
-df = pd.read_csv("anomaly_detection/data/trips.csv")
+df = pd.read_csv("data/trips.csv")
 
 header = [x for x in df.columns]
 counter = 0
