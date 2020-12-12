@@ -56,29 +56,29 @@ services:
   #     - 8042:8042
 
 ############################## Hive #################################
-  hive-server:
-    container_name: hive-server
-    image: bde2020/hive:2.3.2-postgresql-metastore
-    env_file:
-      - ./hadoop-hive.env
-    environment:
-      HIVE_CORE_CONF_javax_jdo_option_ConnectionURL: "jdbc:postgresql://hive-metastore/metastore"
-      SERVICE_PRECONDITION: "hive-metastore:9083"
-    ports:
-      - "10000:10000"
-  hive-metastore:
-    container_name: hive-metastore
-    image: bde2020/hive:2.3.2-postgresql-metastore
-    env_file:
-      - ./hadoop-hive.env
-    command: /opt/hive/bin/hive --service metastore
-    environment:
-      SERVICE_PRECONDITION: "namenode:50070 datanode-1:50075 datanode-2:50075 hive-metastore-postgresql:5432"
-    ports:
-      - "9083:9083"
-  hive-metastore-postgresql:
-    container_name: hive-metastore-postgresql
-    image: bde2020/hive-metastore-postgresql:2.3.0
+  # hive-server:
+  #   container_name: hive-server
+  #   image: bde2020/hive:2.3.2-postgresql-metastore
+  #   env_file:
+  #     - ./hadoop-hive.env
+  #   environment:
+  #     HIVE_CORE_CONF_javax_jdo_option_ConnectionURL: "jdbc:postgresql://hive-metastore/metastore"
+  #     SERVICE_PRECONDITION: "hive-metastore:9083"
+  #   ports:
+  #     - "10000:10000"
+  # hive-metastore:
+  #   container_name: hive-metastore
+  #   image: bde2020/hive:2.3.2-postgresql-metastore
+  #   env_file:
+  #     - ./hadoop-hive.env
+  #   command: /opt/hive/bin/hive --service metastore
+  #   environment:
+  #     SERVICE_PRECONDITION: "namenode:50070 datanode-1:50075 datanode-2:50075 hive-metastore-postgresql:5432"
+  #   ports:
+  #     - "9083:9083"
+  # hive-metastore-postgresql:
+  #   container_name: hive-metastore-postgresql
+  #   image: bde2020/hive-metastore-postgresql:2.3.0
 
 ############################## Spark #################################  
   streaming-spark-master:
@@ -214,6 +214,8 @@ services:
       - "8888:8888"
     volumes:
       - $PWD/src/notebook-dashboard:/home/jovyan/work
+    environment:
+      - JUPYTER_TOKEN=admin
 
   pyspark-notebook-streaming:
     image: pyspark-notebook:spark2.4.1-python3.7-hadoop2.7
@@ -222,7 +224,9 @@ services:
       - "8889:8888"
     volumes:
       - $PWD/src/notebook-spark-streaming-slow-branch:/home/jovyan/work
-      
+    environment:
+      - JUPYTER_TOKEN=admin
+
   # cassandra:
   #   image: cassandra:3.11.4
   #   container_name: cassandra
