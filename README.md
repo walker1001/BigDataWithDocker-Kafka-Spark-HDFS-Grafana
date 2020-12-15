@@ -12,6 +12,9 @@ sudo rm -rf /tmp/*
 ```
 Build images
 ---
+Download spark at: https://archive.apache.org/dist/spark/spark-2.4.1/spark-2.4.1-bin-hadoop2.7.tgz
+
+Save to: dockerfiles/pyspark-notebook/spark-2.4.1-bin-hadoop2.7.tgz
 ```bash
 ./build.sh
 ```
