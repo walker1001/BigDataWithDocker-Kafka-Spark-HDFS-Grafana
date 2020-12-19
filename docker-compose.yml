@@ -30,55 +30,15 @@ services:
       - ./hadoop.env
     ports:
       - 50076:50075
-
-########################### Hadoop v2 ###############################
-  # resourcemanager:
-  #   image: bde2020/hadoop-resourcemanager:2.0.0-hadoop2.7.4-java8
-  #   container_name: resourcemanager
-  #   environment:
-  #     SERVICE_PRECONDITION: "namenode:50070 datanode:50075"
-  #   env_file:
-  #     - ./hadoop.env
-  #   ports:
-  #     - 8088:8088
-  #     - 8032:8032
-  # nodemanager1:
-  #   image: bde2020/hadoop-nodemanager:2.0.0-hadoop2.7.4-java8
-  #   container_name: nodemanager
-  #   environment:
-  #     SERVICE_PRECONDITION: "namenode:50070 datanode:50075 resourcemanager:8088"
-  #   env_file:
-  #     - ./hadoop.env
-  #   depends_on:
-  #     - namenode
-  #     - resourcemanager
-  #   ports:
-  #     - 8042:8042
-
-############################## Hive #################################
-  # hive-server:
-  #   container_name: hive-server
-  #   image: bde2020/hive:2.3.2-postgresql-metastore
-  #   env_file:
-  #     - ./hadoop-hive.env
-  #   environment:
-  #     HIVE_CORE_CONF_javax_jdo_option_ConnectionURL: "jdbc:postgresql://hive-metastore/metastore"
-  #     SERVICE_PRECONDITION: "hive-metastore:9083"
-  #   ports:
-  #     - "10000:10000"
-  # hive-metastore:
-  #   container_name: hive-metastore
-  #   image: bde2020/hive:2.3.2-postgresql-metastore
-  #   env_file:
-  #     - ./hadoop-hive.env
-  #   command: /opt/hive/bin/hive --service metastore
-  #   environment:
-  #     SERVICE_PRECONDITION: "namenode:50070 datanode-1:50075 datanode-2:50075 hive-metastore-postgresql:5432"
-  #   ports:
-  #     - "9083:9083"
-  # hive-metastore-postgresql:
-  #   container_name: hive-metastore-postgresql
-  #   image: bde2020/hive-metastore-postgresql:2.3.0
+  datanode-3:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop2.7.4-java8
+    container_name: datanode-3
+    environment:
+      SERVICE_PRECONDITION: "namenode:50070"
+    env_file:
+      - ./hadoop.env
+    ports:
+      - 50077:50075
 
 ############################## Spark #################################  
   streaming-spark-master:
@@ -96,8 +56,6 @@ services:
     container_name: streaming-spark-worker-1
     depends_on:
       - streaming-spark-master
-    ports:
-      - "18081:8081"
     environment:
       - "SPARK_MASTER=spark://streaming-spark-master:7077"
       - "SPARK_WORKER_CORES=1"
@@ -109,15 +67,23 @@ services:
     container_name: streaming-spark-worker-2
     depends_on:
       - streaming-spark-master
-    ports:
-      - "28081:8081"
     environment:
       - "SPARK_MASTER=spark://streaming-spark-master:7077"
       - "SPARK_WORKER_CORES=1"
       - "SPARK_WORKER_MEMORY=1G"
       - "SPARK_DRIVER_MEMORY=128m"
       - "SPARK_EXECUTOR_MEMORY=256m"
-
+  streaming-spark-worker-3:
+    image: spark-worker:spark2.4.1-python3.7-hadoop2.7
+    container_name: streaming-spark-worker-3
+    depends_on:
+      - streaming-spark-master
+    environment:
+      - "SPARK_MASTER=spark://streaming-spark-master:7077"
+      - "SPARK_WORKER_CORES=1"
+      - "SPARK_WORKER_MEMORY=1G"
+      - "SPARK_DRIVER_MEMORY=128m"
+      - "SPARK_EXECUTOR_MEMORY=256m"
 
   batch-processing-spark-master:
     image: spark-master:spark2.4.1-python3.7-hadoop2.7
@@ -134,8 +100,6 @@ services:
     container_name: batch-processing-spark-worker-1
     depends_on:
       - batch-processing-spark-master
-    ports:
-      - "38081:8081"
     environment:
       - "SPARK_MASTER=spark://batch-processing-spark-master:7077"
       - "SPARK_WORKER_CORES=1"
@@ -147,8 +111,17 @@ services:
     container_name: batch-processing-spark-worker-2
     depends_on:
       - batch-processing-spark-master
-    ports:
-      - "48081:8081"
+    environment:
+      - "SPARK_MASTER=spark://batch-processing-spark-master:7077"
+      - "SPARK_WORKER_CORES=1"
+      - "SPARK_WORKER_MEMORY=1G"
+      - "SPARK_DRIVER_MEMORY=128m"
+      - "SPARK_EXECUTOR_MEMORY=256m"
+  batch-processing-spark-worker-3:
+    image: spark-worker:spark2.4.1-python3.7-hadoop2.7
+    container_name: batch-processing-spark-worker-3
+    depends_on:
+      - batch-processing-spark-master
     environment:
       - "SPARK_MASTER=spark://batch-processing-spark-master:7077"
       - "SPARK_WORKER_CORES=1"
@@ -180,6 +153,7 @@ services:
       - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
       - KAFKA_LISTENERS=INSIDE://kafka-broker-1:9093,OUTSIDE://0.0.0.0:9092
       - KAFKA_INTER_BROKER_LISTENER_NAME=INSIDE
+
   kafka-broker-2:
     image: wurstmeister/kafka:2.12-2.2.1
     container_name: kafka-broker-2
@@ -193,6 +167,20 @@ services:
       - KAFKA_ADVERTISED_LISTENERS=INSIDE://kafka-broker-2:9093,OUTSIDE://localhost:9094
       - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
       - KAFKA_LISTENERS=INSIDE://kafka-broker-2:9093,OUTSIDE://0.0.0.0:9094
+      - KAFKA_INTER_BROKER_LISTENER_NAME=INSIDE
+  kafka-broker-3:
+    image: wurstmeister/kafka:2.12-2.2.1
+    container_name: kafka-broker-3
+    depends_on:
+      - zookeeper
+    ports:
+      - "9095:9095"
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_ADVERTISED_LISTENERS=INSIDE://kafka-broker-3:9093,OUTSIDE://localhost:9095
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      - KAFKA_LISTENERS=INSIDE://kafka-broker-3:9093,OUTSIDE://0.0.0.0:9095
       - KAFKA_INTER_BROKER_LISTENER_NAME=INSIDE
   kafka_manager:
     image: hlebalbau/kafka-manager:2.0.0.2
@@ -226,35 +214,6 @@ services:
       - $PWD/src/notebook-spark-streaming-slow-branch:/home/jovyan/work
     environment:
       - JUPYTER_TOKEN=admin
-
-  # cassandra:
-  #   image: cassandra:3.11.4
-  #   container_name: cassandra
-  #   ports:
-  #     - "7000:7000"
-
-  # postgres:
-  #   image: postgres:latest
-  #   container_name: shopping_cart_postgres
-  #   environment:
-  #     - "TZ=Europe/Amsterdam"
-  #     - "POSTGRES_USER=shopping_cart"
-  #     - "POSTGRES_PASSWORD=shopping_cart"
-  #   ports:
-  #     - "5432:5432"
-
-  # historyserver:
-  #   image: bde2020/hadoop-historyserver:2.0.0-hadoop2.7.4-java8
-  #   container_name: historyserver
-  #   environment:
-  #     SERVICE_PRECONDITION: "namenode:50070 datanode:50075 resourcemanager:8088"
-  #   depends_on:
-  #     - resourcemanager
-  #   env_file:
-  #     - ./hadoop.env
-  #   ports:
-  #     - 8188:8188
-  #     - 19888:19888
 
 networks:
   default:
