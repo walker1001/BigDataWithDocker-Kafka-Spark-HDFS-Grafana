@@ -22,9 +22,14 @@ Start bigdata cluster
 ```bash
 docker-compose -f docker-compose.yml up -d
 ```
-Create a topic
+Create a topic: Go to kafka folder on your computer and run the following commands: 
 ```bash
 bin/kafka-topics.sh --create --topic trips --partitions 3 --replication-factor 3 --bootstrap-server localhost:9092,localhost:9094,localhost:9095
+bin/kafka-topics.sh --create --topic real-time-statistic --partitions 3 --replication-factor 3 --bootstrap-server localhost:9092,localhost:9094,localhost:9095
+```
+Attach kafka exporter to monitor
+```bash
+docker run --network bigdata -ti --rm -p 9308:9308 danielqsj/kafka-exporter --kafka.server=kafka-broker-1:9093 --kafka.server=kafka-broker-2:9093 --kafka.server=kafka-broker-3:9093
 ```
 Producer to kafka topic
 ```bash
