@@ -31,7 +31,7 @@ for i in tqdm(range(args.n)):
         d[header[j]] = str(df[header[j]][i])
     msg = json.dumps(d)
     producer.send(topicName, msg.encode())
-    time.sleep(0.00001)
+    time.sleep(args.delay)
     counter += 1
 s2 = time.time()
 print(f"Sent {counter} records in {s2 - s1} seconds")
