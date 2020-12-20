@@ -7,8 +7,8 @@ from tqdm import tqdm
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--n", type=int, default=10000)
-parser.add_argument("--ack", type=str, choices=['0', '1', 'all'], default='all')
-parser.add_argument("--delay", type=float, default=0.000001)
+parser.add_argument("--ack", type=str, choices=['0', '1', 'all'], default='1')
+parser.add_argument("--delay", type=float, default=0.0001)
 args = parser.parse_args()
 
 bootstrap_servers = ['localhost:9092', 'localhost:9094', 'localhost:9095']
