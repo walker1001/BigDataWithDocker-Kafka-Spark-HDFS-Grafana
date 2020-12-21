@@ -36,3 +36,11 @@ Producer to kafka topic
 ```bash
 python simulation/producer.py
 ```
+Config IP table to connect kafka in a local network
+```
+sudo nano /etc/hosts
+Results:
+127.0.0.1	localhost
+127.0.1.1	Lusheeta
+127.0.0.1	nghiavt
+```
