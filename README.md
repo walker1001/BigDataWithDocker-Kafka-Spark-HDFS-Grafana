@@ -5,8 +5,9 @@ docker rm -f $(docker ps -a -q)
 bin/kafka-topics.sh --list --zookeeper zookeeper:2181
 bin/kafka-topics.sh --create --topic trips --partitions 2 --replication-factor 1 --bootstrap-server localhost:9092,kafka:9093
 bin/kafka-topics.sh --describe --topic trips --bootstrap-server localhost:9092,localhost:9094,localhost:9095
+bin/kafka-topics.sh --describe --topic real-time-statistic --bootstrap-server localhost:9092,localhost:9094,localhost:9095
 bin/kafka-console-producer.sh --topic trips --bootstrap-server localhost:9092,localhost:9094,localhost:9095
-bin/kafka-console-consumer.sh --topic trips --from-beginning --bootstrap-server localhost:9092,localhost:9094,localhost:9095
+bin/kafka-console-consumer.sh --topic real-time-statistic --bootstrap-server localhost:9092,localhost:9094,localhost:9095
 docker ps --format "table {{.Image}}\t{{.Ports}}\t{{.Names}}"
 sudo rm -rf /tmp/*
 ```
