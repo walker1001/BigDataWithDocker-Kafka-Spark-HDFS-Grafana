@@ -30,19 +30,10 @@ services:
       - ./hadoop.env
     ports:
       - 50076:50075
-  datanode-3:
-    image: bde2020/hadoop-datanode:2.0.0-hadoop2.7.4-java8
-    container_name: datanode-3
-    environment:
-      SERVICE_PRECONDITION: "namenode:50070"
-    env_file:
-      - ./hadoop.env
-    ports:
-      - 50077:50075
 
 ############################## Spark #################################  
   pre-batch-processing-spark-master:
-    image: spark-master:spark2.4.1-python3.7-hadoop2.7
+    image: vutrungnghia99/spark-master:spark2.4.1-python3.7-hadoop2.7
     container_name: pre-batch-processing-spark-master
     ports:
       - "8082:8080"
@@ -50,19 +41,8 @@ services:
     environment:
       - INIT_DAEMON_STEP=setup_spark
   pre-batch-processing-spark-worker-1:
-    image: spark-worker:spark2.4.1-python3.7-hadoop2.7
+    image: vutrungnghia99/spark-worker:spark2.4.1-python3.7-hadoop2.7
     container_name: pre-batch-processing-spark-worker-1
-    depends_on:
-      - pre-batch-processing-spark-master
-    environment:
-      - "SPARK_MASTER=spark://pre-batch-processing-spark-master:7077"
-      - "SPARK_WORKER_CORES=1"
-      - "SPARK_WORKER_MEMORY=1G"
-      - "SPARK_DRIVER_MEMORY=128m"
-      - "SPARK_EXECUTOR_MEMORY=256m"
-  pre-batch-processing-spark-worker-2:
-    image: spark-worker:spark2.4.1-python3.7-hadoop2.7
-    container_name: pre-batch-processing-spark-worker-2
     depends_on:
       - pre-batch-processing-spark-master
     environment:
@@ -73,7 +53,7 @@ services:
       - "SPARK_EXECUTOR_MEMORY=256m"
 
   post-batch-processing-spark-master:
-    image: spark-master:spark2.4.1-python3.7-hadoop2.7
+    image: vutrungnghia99/spark-master:spark2.4.1-python3.7-hadoop2.7
     container_name: post-batch-processing-spark-master
     ports:
       - "8083:8080"
@@ -81,7 +61,7 @@ services:
     environment:
       - INIT_DAEMON_STEP=setup_spark
   post-batch-processing-spark-worker-1:
-    image: spark-worker:spark2.4.1-python3.7-hadoop2.7
+    image: vutrungnghia99/spark-worker:spark2.4.1-python3.7-hadoop2.7
     container_name: post-batch-processing-spark-worker-1
     depends_on:
       - post-batch-processing-spark-master
@@ -92,7 +72,7 @@ services:
       - "SPARK_DRIVER_MEMORY=128m"
       - "SPARK_EXECUTOR_MEMORY=256m"
   post-batch-processing-spark-worker-2:
-    image: spark-worker:spark2.4.1-python3.7-hadoop2.7
+    image: vutrungnghia99/spark-worker:spark2.4.1-python3.7-hadoop2.7
     container_name: post-batch-processing-spark-worker-2
     depends_on:
       - post-batch-processing-spark-master
@@ -104,7 +84,7 @@ services:
       - "SPARK_EXECUTOR_MEMORY=256m"
 
   speed-processing-spark-master:
-    image: spark-master:spark2.4.1-python3.7-hadoop2.7
+    image: vutrungnghia99/spark-master:spark2.4.1-python3.7-hadoop2.7
     container_name: speed-processing-spark-master
     ports:
       - "8084:8080"
@@ -112,19 +92,8 @@ services:
     environment:
       - INIT_DAEMON_STEP=setup_spark
   speed-processing-spark-worker-1:
-    image: spark-worker:spark2.4.1-python3.7-hadoop2.7
+    image: vutrungnghia99/spark-worker:spark2.4.1-python3.7-hadoop2.7
     container_name: speed-processing-spark-worker-1
-    depends_on:
-      - speed-processing-spark-master
-    environment:
-      - "SPARK_MASTER=spark://speed-processing-spark-master:7077"
-      - "SPARK_WORKER_CORES=1"
-      - "SPARK_WORKER_MEMORY=1G"
-      - "SPARK_DRIVER_MEMORY=128m"
-      - "SPARK_EXECUTOR_MEMORY=256m"
-  speed-processing-spark-worker-2:
-    image: spark-worker:spark2.4.1-python3.7-hadoop2.7
-    container_name: speed-processing-spark-worker-2
     depends_on:
       - speed-processing-spark-master
     environment:
@@ -143,7 +112,8 @@ services:
       ZOO_SERVERS: server.1=0.0.0.0:2888:3888
       ZOO_TICK_TIME: 15000
     ports:
-      - 2181:2181      
+      - 2181:2181
+   
   kafka-broker-1:
     image: wurstmeister/kafka:2.12-2.2.1
     container_name: kafka-broker-1
@@ -154,11 +124,10 @@ services:
     environment:
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
       - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_ADVERTISED_LISTENERS=INSIDE://kafka-broker-1:9093,OUTSIDE://nghiavt:9092
+      - KAFKA_ADVERTISED_LISTENERS=INSIDE://kafka-broker-1:9093,OUTSIDE://localhost:9092
       - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
       - KAFKA_LISTENERS=INSIDE://kafka-broker-1:9093,OUTSIDE://0.0.0.0:9092
       - KAFKA_INTER_BROKER_LISTENER_NAME=INSIDE
-
   kafka-broker-2:
     image: wurstmeister/kafka:2.12-2.2.1
     container_name: kafka-broker-2
@@ -169,70 +138,36 @@ services:
     environment:
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
       - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_ADVERTISED_LISTENERS=INSIDE://kafka-broker-2:9093,OUTSIDE://nghiavt:9094
+      - KAFKA_ADVERTISED_LISTENERS=INSIDE://kafka-broker-2:9093,OUTSIDE://localhost:9094
       - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
       - KAFKA_LISTENERS=INSIDE://kafka-broker-2:9093,OUTSIDE://0.0.0.0:9094
       - KAFKA_INTER_BROKER_LISTENER_NAME=INSIDE
-  kafka-broker-3:
-    image: wurstmeister/kafka:2.12-2.2.1
-    container_name: kafka-broker-3
-    depends_on:
-      - zookeeper
-    ports:
-      - "9095:9095"
-    environment:
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-      - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_ADVERTISED_LISTENERS=INSIDE://kafka-broker-3:9093,OUTSIDE://nghiavt:9095
-      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
-      - KAFKA_LISTENERS=INSIDE://kafka-broker-3:9093,OUTSIDE://0.0.0.0:9095
-      - KAFKA_INTER_BROKER_LISTENER_NAME=INSIDE
-  # kafka-exporter:
-  #   image: danielqsj/kafka-exporter:latest
-  #   container_name: kafka-exporter
-  #   environment:
-  #     SERVICE_PRECONDITION: "kafka-broker-1:9093 kafka-broker-2:9093 kafka-broker-3:9093"
-  #   depends_on:
-  #     - kafka-broker-1
-  #     - kafka-broker-2
-  #     - kafka-broker-3
-  #   ports:
-  #     - "9308:9308"
-  #   command:
-  #     --kafka.server=kafka-broker-1:9093
-  #     --kafka.server=kafka-broker-2:9093
-  #     --kafka.server=kafka-broker-3:9093
 
-############################## Notebook #################################
-  dashboard-notebook:
-    image: dashboard-notebook:spark2.4.1-python3.7-hadoop2.7-hive
-    container_name: dashboard-notebook
+############################## manager #################################
+  system-manager:
+    image: vutrungnghia99/system-manager:spark2.4.1-python3.7-hadoop2.7-kafka2.7.0
+    container_name: system-manager
     ports:
       - "8888:8888"
     volumes:
-      - $PWD/src/post-batch-processing-spark:/home/jovyan/work
+      - $PWD/src:/home/jovyan/work
     environment:
       - JUPYTER_TOKEN=admin
 
-  spark-notebook-batch-branch:
-    image: pyspark-notebook:spark2.4.1-python3.7-hadoop2.7
-    container_name: spark-notebook-batch-branch
+####################### Graphite and Grafana ############################
+  graphite:
+    image: sitespeedio/graphite:latest
+    container_name: graphite
     ports:
-      - "8889:8888"
-    volumes:
-      - $PWD/src/pre-batch-processing-spark:/home/jovyan/work
-    environment:
-      - JUPYTER_TOKEN=admin
+      - "80:80"
+      - "2003:2003"
+      - "2004:2004"
 
-  spark-notebook-speed-branch:
-    image: pyspark-notebook:spark2.4.1-python3.7-hadoop2.7
-    container_name: spark-notebook-speed-branch
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
     ports:
-      - "8890:8888"
-    volumes:
-      - $PWD/src/speed-processing-spark:/home/jovyan/work
-    environment:
-      - JUPYTER_TOKEN=admin
+      - "3000:3000"
 
 networks:
   default:
