@@ -6,7 +6,7 @@ import time
 from tqdm import tqdm
 import random
 
-RATE_FAKE_EVENT = 0.12
+RATE_FAKE_EVENT = 0.5
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--n", type=int, default=1000)
@@ -29,14 +29,15 @@ counter = 0
 s1 = time.time()
 
 t1 = time.time()
-j = 0
+k = 0
 t2 = t1
 for i in tqdm(range(args.n)):
     t2 = time.time()
     if t2 - t1 >= 10:
         t1 = t2
-        j += 1
-        j //= 3
+        k += 1
+        k %= 3
+    # print(k)
     d = {}
     d['ID'] = i
     for j in range(len(header)):
@@ -50,9 +51,10 @@ for i in tqdm(range(args.n)):
     #     now = time.time()
     #     producer.send(topic=topicName, value=msg.encode(), timestamp_ms=int(now) * 1000 - late_time * 1000)
     # else:
-    if j == 1:
+    if k == 2:
         rd_fake_late = random.uniform(0, 1)
         if rd_fake_late < RATE_FAKE_EVENT:
+            print("late event")
             now = time.time()
             producer.send(topic=topicName, value=msg.encode(), timestamp_ms=int(now) * 1000 - 10 * 1000)
         else:
