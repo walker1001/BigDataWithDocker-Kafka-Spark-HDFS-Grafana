@@ -44,3 +44,37 @@ Results:
 127.0.1.1	Lusheeta
 127.0.0.1	nghiavt
 ```
+### Visualization
+#### Install graphite
+*Notes*: This configuration does not include network configuration. You should set the `--net` option when running the image.
+```
+docker pull sitespeedio/graphite
+docker run -d --name=graphite --restart=always -p 80:80 -p 2003:2003 -p 2004:2004 sitespeedio/graphite
+```
+To access graphite web UI, type localhost:80 on your browser. The credentials are:
+- `username`: `guest`
+- `password`: `guest`
+
+#### Install grafana
+*Notes*: Similar to graphite.
+```
+docker pull grafana/grafana
+docker run -d --name grafana -p 3000:3000 grafana/grafana
+```
+To access grafana web UI, type localhost:3000 on your browser. The credentials are:
+- `username`: `admin`
+- `password`: `admin`
+##### Add datasource in grafana
+When add datasource to grafana, choose graphite datasource. Then the configurations for the datasource are:
+- URL: `http://<your container ip>:80`
+- Basic auth: checked
+- Basic auth details:
+	User: `guest`
+	Password: `guest`
+Then click `Save and test`
+#### Run .jar file
+Only run this file after starting graphite and kafka broker. The current IP for broker is `nghiavt:9092,nghiavt:9094,nghiavt:9095`. The topic to which this app subscribes is `real-time-statistic`.
+```
+java -jar WmGraphiteConsumer-1.0-SNAPSHOT.jar
+```
+
