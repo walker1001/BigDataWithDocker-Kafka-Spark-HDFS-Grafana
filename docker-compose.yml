@@ -156,7 +156,7 @@ services:
 
 ####################### Graphite and Grafana ############################
   graphite:
-    image: sitespeedio/graphite:latest
+    image: vutrungnghia99/graphite:1.1.7-6
     container_name: graphite
     ports:
       - "80:80"
