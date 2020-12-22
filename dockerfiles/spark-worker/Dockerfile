@@ -1,5 +1,4 @@
-# FROM bde2020/spark-base:2.4.1-hadoop2.7
-FROM pyspark-notebook:spark2.4.1-python3.7-hadoop2.7
+FROM vutrungnghia99/pyspark:spark2.4.1-python3.7-hadoop2.7
 
 LABEL maintainer="Gezim Sejdiu <g.sejdiu@gmail.com>, Giannis Mouchakis <gmouchakis@gmail.com>"
 
