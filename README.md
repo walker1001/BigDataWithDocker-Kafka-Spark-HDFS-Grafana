@@ -19,7 +19,6 @@ Acknowledgement:
  - http://www.diva-portal.org/smash/get/diva2:897808/FULLTEXT01.pdf
 
 Prerequires:
----
  - java 8
  - python 3.8
  - pip install kafka-python==2.0.2
