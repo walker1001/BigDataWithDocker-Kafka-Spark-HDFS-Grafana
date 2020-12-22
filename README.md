@@ -5,7 +5,8 @@ Authors:
  - Dang Lam San
 
 In this project, we built a pipeline for storing and processing PNRs data 
-Link data: (https://developers.amadeus.com/blog/free-fake-pnr-sample-data)
+
+(https://developers.amadeus.com/blog/free-fake-pnr-sample-data)
 
 The pipeline support batch view and real-time view:
  - In batch view, user can using SQL api and python to query and visuzlie data in HDFS
