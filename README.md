@@ -19,7 +19,6 @@ Acknowledgement:
  - http://www.diva-portal.org/smash/get/diva2:897808/FULLTEXT01.pdf
 
 Prerequires:
- - java 8
  - python 3.8
  - pip install kafka-python==2.0.2
  - docker version 20.10.1, build 831ebea
@@ -64,6 +63,13 @@ Run all:
  - `batch-processing.ipynb`: listen on topic `trips` => process data => save to hdfs
  - `speed-processing.ipynb`: listen on topic `trips` => process data => write to topic `real-time-statistic`
 
+Run java app to consume topic `real-time-statistic` and write result to graphite
+ - Go to `localhost:8888` and open terminal
+```
+cd ~/work
+java -jar app/KafkafToGraphite.jar
+```
+
 Take a look at spark master at: `localhost:8082`, `localhost:8083`, `localhost:8084`
 Take a look at hdfs at: `localhost:50070`
 
@@ -83,12 +89,8 @@ Add data source in grafana. On the left bar: `Configuration` => `Data Sources` =
    - Password: `guest`
 
 Create dashboard in grafana
+ - On the left bar: `+` => `import` => choose dashboard json at: `dashboard/dashboard.json`
 
-
-Run java app to consume topic `real-time-statistic` and write result to graphite
-```
-java -jar app/KafkafToGraphite.jar
-```
 Produce records from your local machine (you machine must install kafka-python==2.0.2)
 ```
 python simulation/producer.py --n 10000 --delay 0.1
