@@ -93,7 +93,7 @@ Add data source in grafana. On the left bar: `Configuration` => `Data Sources` =
 Create dashboard in grafana
  - On the left bar: `+` => `import` => choose dashboard json at: `dashboard/dashboard.json`
 
-Produce records from your local machine (you machine must install kafka-python==2.0.2)
+Produce records from your local machine (your machine must install kafka-python==2.0.2)
 ```
 python simulation/producer.py --n 10000 --delay 0.1
 ```
