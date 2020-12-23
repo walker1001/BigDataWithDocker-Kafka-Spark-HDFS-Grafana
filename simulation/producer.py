@@ -29,6 +29,16 @@ counter = 0
 s1 = time.time()
 
 t1 = time.time()
+# delay for test
+tmp = -1
+while int(t1) % 10 != 0:
+    if tmp != int((10 - (int(t1)%10))):
+        tmp = int((10 - (int(t1)%10)))
+        print(f'Waiting for sending data {tmp} seconds left')
+    t1 = time.time()
+
+print('Starting sending data ...')
+
 k = 0
 t2 = t1
 for i in tqdm(range(args.n)):
