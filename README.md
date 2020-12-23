@@ -31,7 +31,7 @@ Create docker network name: bigdata
 docker network create bigdata
 ```
 Remove old containers
-```
+```bash
 docker rm -f $(docker ps -a -q)
 ```
 Start bigdata cluster
