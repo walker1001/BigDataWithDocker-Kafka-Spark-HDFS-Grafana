@@ -159,7 +159,7 @@ services:
     image: vutrungnghia99/graphite:1.1.7-6
     container_name: graphite
     ports:
-      - "80:80"
+      - "8880:80"
       - "2003:2003"
       - "2004:2004"
 
