@@ -35,7 +35,7 @@ Acknowledgement:
 
 Setup
 ===
-Prerequires:
+Prerequisite:
  - Hardware:
    - RAM: 8 GB
    - Storage: 40GB
