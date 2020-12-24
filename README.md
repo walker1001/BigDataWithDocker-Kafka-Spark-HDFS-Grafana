@@ -1,14 +1,17 @@
-# Big data storage and processing pipeline
+# Bigdata pipeline with Docker + Kafka + Spark + HDFS + Grafana
+
+Introduction
+===
 Authors:
+ - Vu Trung Nghia - nghia.vt173284@sis.hust.edu.vn
  - Le Vu Loi
- - Vu Trung Nghia
  - Dang Lam San
 
-In this project, we built a pipeline for storing and processing PNRs data 
+In this project, we built a pipeline for storing and processing PNRs data
 
 (https://developers.amadeus.com/blog/free-fake-pnr-sample-data)
 
-The pipeline support batch view and real-time view:
+The pipeline supports batch view and real-time view:
  - In batch view, user can using SQL api and python to query and visuzlie data in HDFS
  - For real-time view, we simple logs the number of recieved records every 10 seconds
 
@@ -18,13 +21,20 @@ Acknowledgement:
  - https://github.com/haiphucnguyen/BigDataDemo
  - http://www.diva-portal.org/smash/get/diva2:897808/FULLTEXT01.pdf
 
+Setup
+===
 Prerequires:
- - python 3.8
- - pip install kafka-python==2.0.2
- - docker version 20.10.1, build 831ebea
- - docker-compose version 1.25.0
- - ubuntu 20.04
- - RAM: 8 GB
+ - Hardware:
+   - RAM: 8 GB
+   - Storage: 40GB
+ - Software:
+   - python 3.8
+   - pip install kafka-python==2.0.2
+   - docker version 20.10.1, build 831ebea
+   - docker-compose version 1.25.0
+   - ubuntu 20.04
+ - Have basic knowledge of kafka, spark, hdfs, python and jupyter notebook
+
 
 Create docker network name: bigdata
 ```
@@ -82,10 +92,6 @@ To access grafana web UI, type `localhost:3000` on your browser. The credentials
 
 Add data source in grafana. On the left bar: `Configuration` => `Data Sources` => `Add data source`. Choose Graphite from the list. The configuration are:
 - URL: `graphite:80`
-- Basic auth: checked
-- Basic auth details:
-   - User: `guest`
-   - Password: `guest`
 - Click `Save & Test`
 
 ![alt text](reports/images/add_graphite_datasource.png)
