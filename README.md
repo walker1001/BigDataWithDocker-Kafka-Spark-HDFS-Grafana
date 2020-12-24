@@ -12,7 +12,7 @@ In this project, we built a pipeline for storing and processing PNRs data
 (https://developers.amadeus.com/blog/free-fake-pnr-sample-data)
 
 The pipeline supports batch view and real-time view:
- - In batch view, user can using SQL api and python to query and visuzlie data in HDFS
+ - In batch view, user can using SQL api and python to query and visualize data in HDFS
  - For real-time view, we simple logs the number of recieved records every 10 seconds
 
 How it works?
