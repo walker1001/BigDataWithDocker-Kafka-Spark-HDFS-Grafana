@@ -38,7 +38,7 @@ Setup
 Prerequisite:
  - Hardware:
    - RAM: 8 GB
-   - Storage: 15GB
+   - Storage: 15 GB
  - Software:
    - python 3.8
    - pip install kafka-python==2.0.2
