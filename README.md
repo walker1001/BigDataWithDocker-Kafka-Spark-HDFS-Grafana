@@ -124,7 +124,7 @@ Go to `dashboard.ipynb` and run all to see the statistics and anomaly detection 
 ![alt text](reports/images/dashboard_read_from_hdfs.png)
 
 
-Go to grafana UI dashboard to see the graph which show the number of recieved records every 10 seconds
+Go to grafana UI dashboard to see the graph which shows the number of recieved records every 10 seconds
 
 
 ![alt text](reports/images/grafana_data.png)
