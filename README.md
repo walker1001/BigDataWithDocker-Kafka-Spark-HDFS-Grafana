@@ -13,7 +13,7 @@ In this project, we built a pipeline for storing and processing PNRs data
 
 The pipeline supports batch view and real-time view:
  - In batch view, user can using SQL api and python to query and visualize data in HDFS
- - For real-time view, we simple logs the number of recieved records every 10 seconds
+ - For real-time view, we simply logs the number of recieved records every 10 seconds
 
 How it works?
  - PNR's API produces records to a topic in kafka cluster.
