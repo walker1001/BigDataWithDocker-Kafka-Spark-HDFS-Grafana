@@ -15,6 +15,13 @@ The pipeline supports batch view and real-time view:
  - In batch view, user can using SQL api and python to query and visuzlie data in HDFS
  - For real-time view, we simple logs the number of recieved records every 10 seconds
 
+How it works?
+ - PNR's API produces records to a topic in kafka cluster.
+ - Batch Processing program and Real-time Procesisng program subscribe to this topic, these programs use spark cluster 1 and spark cluster 3 as its computation resource.
+ - Batch Processing program processes data and stores to HDFS. Then user can use Interactive Dashboard which is a notebook to read data from HDFS and do some statistics. This notebook use spark cluster 2 as its computation resource.
+ - Real-time Processing program processes data and writes to another kafka topic, then the JavaApp subscribes to this topic to read data and write to Graphite database. Finally, Real-time Dashboard read datas from Graphite and visualizes.
+
+
 ![alt text](reports/images/overview_architecture.png)
 
 Acknowledgement:
