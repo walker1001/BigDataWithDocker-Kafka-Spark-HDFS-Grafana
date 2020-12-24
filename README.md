@@ -27,6 +27,11 @@ How it works?
 Acknowledgement:
  - https://github.com/haiphucnguyen/BigDataDemo
  - http://www.diva-portal.org/smash/get/diva2:897808/FULLTEXT01.pdf
+ - https://blog.softwaremill.com/7-mistakes-when-using-apache-kafka-44358cd9cd6
+ - https://spark.apache.org/docs/latest/streaming-programming-guide.html
+ - https://spark.apache.org/docs/latest/structured-streaming-kafka-integration.html
+ - https://spark.apache.org/docs/1.5.2/sql-programming-guide.html
+ - https://spark.apache.org/docs/latest/api/python/_modules/pyspark/sql/streaming.html
 
 Setup
 ===
