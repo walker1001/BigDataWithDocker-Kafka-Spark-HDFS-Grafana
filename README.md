@@ -52,7 +52,7 @@ Create docker network name: bigdata
 ```
 docker network create bigdata
 ```
-Remove old containers
+Remove all containers (The below command will remove all containers whether it is running or not)
 ```bash
 docker rm -f $(docker ps -a -q)
 ```
