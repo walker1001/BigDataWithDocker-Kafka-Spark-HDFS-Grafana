@@ -42,14 +42,14 @@ Prerequisite
  - Software:
    - python 3.8
    - pip install kafka-python==2.0.2
-   - docker version 20.10.1, build 831ebea
-   - docker-compose version 1.25.0
-   - ubuntu 20.04
+   - docker version 20.10.1, build 831ebea (other version should work well)
+   - docker-compose version 1.25.0 (other version should work well)
+   - ubuntu 20.04 / windows 10
  - Have basic knowledge of kafka, spark, hdfs, python and jupyter notebook
 
 Setup
 ===
-Navigate to project
+Navigate to the project
 ```
 cd BigDataWithDocker-Kafka-Spark-HDFS-Grafana
 ```
