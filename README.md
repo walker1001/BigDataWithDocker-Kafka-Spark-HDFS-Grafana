@@ -33,9 +33,9 @@ Acknowledgement:
  - https://spark.apache.org/docs/1.5.2/sql-programming-guide.html
  - https://spark.apache.org/docs/latest/api/python/_modules/pyspark/sql/streaming.html
 
-Setup
+
+Prerequisite
 ===
-Prerequisite:
  - Hardware:
    - RAM: 8 GB
    - Storage: 15 GB
@@ -47,14 +47,19 @@ Prerequisite:
    - ubuntu 20.04
  - Have basic knowledge of kafka, spark, hdfs, python and jupyter notebook
 
-
+Setup
+===
+Navigate to project
+```
+cd BigDataWithDocker-Kafka-Spark-HDFS-Grafana
+```
 Create docker network name: bigdata
 ```
 docker network create bigdata
 ```
-Remove all containers (The below command will remove all containers whether it is running or not)
+Remove all containers in docker-compose file if exists
 ```bash
-docker rm -f $(docker ps -a -q)
+docker-compose down
 ```
 Start bigdata cluster
 ```bash
