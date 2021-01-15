@@ -150,7 +150,7 @@ services:
     ports:
       - "8888:8888"
     volumes:
-      - $PWD/src:/home/jovyan/work
+      - ./src:/home/jovyan/work
     environment:
       - JUPYTER_TOKEN=admin
 
