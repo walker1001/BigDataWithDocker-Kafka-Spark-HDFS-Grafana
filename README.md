@@ -37,7 +37,7 @@ Acknowledgement:
 Prerequisite
 ===
  - Hardware:
-   - RAM: 8 GB
+   - RAM: 12 GB
    - Storage: 15 GB
  - Software:
    - python 3.8
