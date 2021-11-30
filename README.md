@@ -44,7 +44,7 @@ Prerequisite
    - pip install kafka-python==2.0.2
    - docker version 20.10.1, build 831ebea (other version should work well)
    - docker-compose version 1.25.0 (other version should work well)
-   - ubuntu 20.04 / windows 10
+   - ubuntu 20.04 / Fedora 34 / windows 10
  - Have basic knowledge of kafka, spark, hdfs, python and jupyter notebook
 
 Setup
